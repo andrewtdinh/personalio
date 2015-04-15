@@ -2,34 +2,23 @@ doctype html
 html
   head
     meta(charset='utf-8')      
-    title To Do App
+    title Personalio
     link(rel='stylesheet', href='/vendor/font-awesome/css/font-awesome.min.css')
     link(rel='stylesheet', href=isProd ? '/index.min.css' : '/index.css')
     link(rel='shortcut icon', href='/favicon.ico')
   body
-    h1#header My ToDo App
-    input#name(type='text', autofocus=true)
-    button#set-name Set Name
+    h1 Your Personalio Account
+    #personal-info
+      #name-div
+        label Name: 
+        input#user(type='text', autofocus=true)
+      #balance-div
+        label Balance: 
+        input#balance
+      button#update-account Update Account
     
-    #controls
-      input#title(type='text', placeholder='Title')
-      input#due-date(type='date')
-      select#priority
-        option High
-        option Medium
-        option Low
-      button#create-task Create Task
+    #manage
     
-    table#todos
-      thead
-        tr
-          th Delete
-          th Is Complete?
-          th Title
-          th Due Date
-          th Priority
-          th Created At
-      tbody
       
     script(src='/vendor/momentjs/min/moment.min.js')
     script(src='/vendor/jquery/dist/jquery.min.js')
