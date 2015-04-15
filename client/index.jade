@@ -16,10 +16,36 @@ html
         label Balance: 
         input#balance
       button#update-account Update Account
+      #display
+        label#owner Account Owner:
+        label#total-balance  
     
     #manage
-    
+      #folio-update
+        input#create-sector(type='text')
+        button#create-folio Create Porfolio
+      #purchase
+        table
+          thead
+            tr
+              th Symbol
+              th Porfolio List
+              th # Shares
+              th
+          tbody
+            tr
+              td
+                input#stockID(type='text')
+              td 
+                select#porfolio-list
+              td
+                input#shareNum(type='text')
+              td
+                button#buyStocks Buy
+    #summary  
       
+    
+    
     script(src='/vendor/momentjs/min/moment.min.js')
     script(src='/vendor/jquery/dist/jquery.min.js')
     script(src='/vendor/lodash/lodash.min.js')
