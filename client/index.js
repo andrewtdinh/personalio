@@ -4,7 +4,7 @@
 
 $(document).ready(init);
 
-var root, user, cash, folios;
+var root, user, cash, folios, position;
 
 function init(){
   root = new Firebase('https://your-personalio.firebaseio.com/');
@@ -19,38 +19,56 @@ function init(){
   $('#update-account').click(updateAccount);
   // whenever balance is changed locally the cash.on event changes Firebase. Same for folios.on
   cash.on('value', balanceChanged);
+
+  $('#create-folio').click(addFolio);
   folios.on('child_added', newPortfolio);
 
-  // LOCAL EVENT HANDLERS
-  $('#create-folio').click(addFolio);
-  $('#get-quote').click(getQuote);
-  $('#buyStocks').click(addStock);
+  $('#buyStocks').click(getQuote);
+  // $('#get-quote').click(getQuote);
 }
 
 // NEED TO CREATE FUNCTION TO GET STOCK NUMBER AND VALUE
+// 1. get all folios
+// 2. for in loop through them
+// 3. at eat folio, get the stocks
+// 4.
+function updateDisplay(){
 
+}
 
 function addStock() {
   var key = $('#portfolio-list').val();
   var folio = folios.child(key);
 
   var stock = {
-    stockSymbol: $('#stockID').val(),
-    numberOfStocks: $('#shareNum').val()
+    name: $('#stockID').val(),
+    numberOfStocks: $('#shareNum').val(),
+    position: position
   };
+
+  console.log(stock);
   folio.push(stock);
+  $('#stockID').val('');
+  $('#shareNum').val('');
 }
+
+
+
 
 function newPortfolio(snapshot){
   var portfolioName = snapshot.val();
-  $('#portfolio-list').append('<option value='+snapshot.key()+'>'+portfolioName+'</option>');
+  var key = snapshot.key();
+  $('#portfolio-list').append('<option value='+key+'>'+portfolioName.name+'</option>');
   $('#portfolioType').val('');
-  // console.log(snapshot.key());
 }
 
 function addFolio(){
   var folioName = $('#portfolioType').val();
-  folios.push(folioName);
+  var thisFolio = {
+    name: folioName,
+    balance: 0
+  };
+  folios.push(thisFolio);
 }
 
 function balanceChanged(snapshot){
@@ -75,13 +93,26 @@ function userChanged(snapshot){
   $('#owner').text('Account Owner: ' + name);
 }
 
-
-
-
 function getQuote(){
-  var symbol = $('#symbol').val().toUpperCase();
-  var url = 'http://dev.markitondemand.com/Api/v2/Quote/jsonp?symbol=' +symbol+ '$callback=?';
-  $.getJASON(url, function(response){
-    $('#quote').text(JSON.stringify(response));
-  });
+  var symbol = $('#stockID').val().toUpperCase();
+  // var url = 'http://dev.markitondemand.com/Api/v2/Quote/jsonp?symbol=' +symbol+ '$callback=?';
+  var url = 'http://dev.markitondemand.com/Api/v2/Quote/jsonp?symbol=' +symbol+ '&callback=?';
+  console.log(url);
+  var thisPosition;
+  $.getJSON(url,
+    function(response){
+      thisPosition = response.LastPrice * 1;
+      setGlobalVariable(thisPosition);
+      console.log('tests');
+    }
+  );
+  // $.getJASON(url, function(response){
+  //   $('#quote').text(JSON.stringify(response));
+  // });
+}
+
+function setGlobalVariable(pos) {
+  console.log(pos);
+  position = pos;
+  addStock();
 }
