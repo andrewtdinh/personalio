@@ -7,59 +7,74 @@ $(document).ready(init);
 var root, user, cash, folios;
 
 function init(){
-  root = new Firebase('https://personalio.firebaseio.com/');
+  root = new Firebase('https://your-personalio.firebaseio.com/');
+  // These root.children are ONLY pointers to their respective locations in Firebase
   user = root.child('user');
   cash = root.child('cash');
   folios = root.child('folios');
-<<<<<<< HEAD
 
-  // CLICK HANDLERS
-=======
+  // EVENT HANDLERS FOR FIREBASE
+  // the user.on event is called whenever user is changed, e.g from updateAccount which is only called once at the start
   user.on('value', userChanged);
-  cash.on('value', balanceChanged);
-
-
->>>>>>> 3ade6c3fcbd730861e4bbbc24271560fc94cac99
   $('#update-account').click(updateAccount);
+  // whenever balance is changed locally the cash.on event changes Firebase. Same for folios.on
   cash.on('value', balanceChanged);
+  folios.on('child_added', newPortfolio);
 
+  // LOCAL EVENT HANDLERS
+  $('#create-folio').click(addFolio);
   $('#get-quote').click(getQuote);
+  $('#buyStocks').click(addStock);
 }
 
-<<<<<<< HEAD
+// NEED TO CREATE FUNCTION TO GET STOCK NUMBER AND VALUE
 
-function balanceChanged(snapshot){
-  var name = snapshot.val();
-  $('#header').text('Todo : ' + name);
-=======
+
+function addStock() {
+  var key = $('#portfolio-list').val();
+  var folio = folios.child(key);
+
+  var stock = {
+    stockSymbol: $('#stockID').val(),
+    numberOfStocks: $('#shareNum').val()
+  };
+  folio.push(stock);
+}
+
+function newPortfolio(snapshot){
+  var portfolioName = snapshot.val();
+  $('#portfolio-list').append('<option value='+snapshot.key()+'>'+portfolioName+'</option>');
+  $('#portfolioType').val('');
+  // console.log(snapshot.key());
+}
+
+function addFolio(){
+  var folioName = $('#portfolioType').val();
+  folios.push(folioName);
+}
+
 function balanceChanged(snapshot){
   var balance = snapshot.val();
-  console.log(snapshot.val());
+  cash.set(balance);
   $('#total-balance').text('Total Account Balance: ' + balance);
-}
-
-function userChanged(snapshot){
-  var name = snapshot.val();
-  console.log(snapshot.val());
-  $('#owner').text('Account Owner: ' + name);
->>>>>>> 3ade6c3fcbd730861e4bbbc24271560fc94cac99
 }
 
 function updateAccount(){
   var name = $('#user').val();
   var balance = $('#balance').val();
-<<<<<<< HEAD
-  // $('#user').val('');
   user.set(name);
   cash.set(balance);
-=======
-  user.set(name);
-  cash.set(balance);
+
   $('#name-div').remove();
   $('#balance-div').remove();
   $('#update-account').remove();
->>>>>>> 3ade6c3fcbd730861e4bbbc24271560fc94cac99
 }
+
+function userChanged(snapshot){
+  var name = snapshot.val();
+  $('#owner').text('Account Owner: ' + name);
+}
+
 
 
 
